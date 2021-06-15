@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  db_post:
+    container_name: postgresdbposts
+    image: postgres:13.3-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+    volumes:
+      - posts_data:/var/lib/postgresql/data
+
+  api_post:
+    container_name: jibjabpost
+    image: docker.pkg.github.com/jibber-jabber-inc/jib-jab-api-posts/jibjab_posts-production:latest
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: 1234
+      DB_NAME: postgres
+      DB_HOST: postgresdbposts
+      DB_PORT: 5432
+
+
+  client:
+    container_name: jibjabclient
+    image: docker.pkg.github.com/jibber-jabber-inc/jib-jab-client/jibjab_client-production:latest
+
+  revproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    ports:
+      - 3000:80
+
+volumes:
+  posts_data:
+  users_data:
