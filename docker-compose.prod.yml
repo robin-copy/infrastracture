@@ -1,30 +1,30 @@
 version: '3'
 
 services:
-  db_post:
-    container_name: postgresdbposts
+  db:
+    container_name: db
     image: postgres:13.3-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: postgres
     volumes:
-      - posts_data:/var/lib/postgresql/data
+      - data:/var/lib/postgresql/data
 
-  api_post:
-    container_name: jibjabpost
-    image: docker.pkg.github.com/jibber-jabber-inc/jib-jab-api-posts/jibjab_posts-production:latest
+  api:
+    container_name: api
+    image: docker.pkg.github.com/robin-copy/api/robin-copy-api-development:latest
     environment:
       DB_USER: postgres
       DB_PASSWORD: 1234
       DB_NAME: postgres
-      DB_HOST: postgresdbposts
+      DB_HOST: db
       DB_PORT: 5432
 
 
   client:
-    container_name: jibjabclient
-    image: docker.pkg.github.com/jibber-jabber-inc/jib-jab-client/jibjab_client-production:latest
+    container_name: client
+    image: docker.pkg.github.com/robin-copy/client-web/robin-copy-client-develop:latest
 
   revproxy:
     build:
@@ -34,5 +34,5 @@ services:
       - 3000:80
 
 volumes:
-  posts_data:
-  users_data:
+  data:
+    external: true
